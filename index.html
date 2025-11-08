@@ -1,13 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UmarLuxe AI - Business Assistant</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UmarLuxe — Business AI</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #f7f8fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .chatbox {
+      width: 90%;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      height: 300px;
+    }
+    .user, .bot {
+      margin: 8px 0;
+      padding: 10px 14px;
+      border-radius: 10px;
+    }
+    .user {
+      background: #dcf8c6;
+      align-self: flex-end;
+    }
+    .bot {
+      background: #e9e9eb;
+      align-self: flex-start;
+    }
+    input {
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      width: 100%;
+      outline: none;
+      background: #f0f2f5;
+    }
+    button {
+      margin-top: 10px;
+      padding: 12px;
+      background: #0078ff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005fcc;
+    }
+  </style>
 </head>
-<body style="font-family: sans-serif; text-align: center; padding: 50px;">
-  <h1>Welcome to UmarLuxe AI 💫</h1>
-  <p>Founder: <strong>Aatika Umar</strong></p>
-  <p>Your AI Business Assistant — Learn. Build. Grow.</p>
+<body>
+  <div class="chatbox">
+    <div class="messages" id="messages"></div>
+    <input id="userInput" type="text" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const msg = input.value.trim();
+      if (!msg) return;
+      
+      const messagesDiv = document.getElementById("messages");
+      const userDiv = document.createElement("div");
+      userDiv.className = "user";
+      userDiv.innerText = msg;
+      messagesDiv.appendChild(userDiv);
+      input.value = "";
+
+      const botDiv = document.createElement("div");
+      botDiv.className = "bot";
+      botDiv.innerText = "Thinking...";
+      messagesDiv.appendChild(botDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: msg }),
+      });
+
+      const data = await response.json();
+      botDiv.innerText = data.reply;
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+  </script>
 </body>
 </html>
+
